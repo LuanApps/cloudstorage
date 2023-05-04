@@ -34,14 +34,19 @@ public class FileController {
     @PostMapping("/fileUpload")
     public String uploadFile(@RequestParam("fileUpload") MultipartFile file, Model model, Authentication authentication) {
         User currentUser = userService.getUser(authentication.getName());
-        File newFile = fileService.createFile(file, currentUser);
-        if(fileService.uploadFile(newFile)) {
-            model.addAttribute("successResponse", true);
-            model.addAttribute("message", "File uploaded successfully!");
-        }
-        else {
+        if (file == null || file.isEmpty()) {
             model.addAttribute("failResponse", true);
-            model.addAttribute("message", "A File with this name already exist!");
+            model.addAttribute("message", "Please choose a file to upload!");
+        } else {
+            File newFile = fileService.createFile(file, currentUser);
+            if(fileService.uploadFile(newFile)) {
+                model.addAttribute("successResponse", true);
+                model.addAttribute("message", "File uploaded successfully!");
+            }
+            else {
+                model.addAttribute("failResponse", true);
+                model.addAttribute("message", "A File with this name already exist!");
+            }
         }
         model.addAttribute("nav", "/home#nav-files");
         return "result";

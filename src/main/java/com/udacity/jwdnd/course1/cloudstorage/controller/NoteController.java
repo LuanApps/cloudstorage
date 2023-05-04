@@ -24,6 +24,18 @@ public class NoteController {
     @PostMapping("/saveNote")
     public String saveOrEditNote(@RequestParam("noteTitle") String title, @RequestParam("noteDescription")String description, @RequestParam("noteId") Integer noteId, Model model, Authentication authentication){
         User currentUser = userService.getUser(authentication.getName());
+        if(title.length() > 20){
+            model.addAttribute("errorResponse", true);
+            model.addAttribute("message", "Note can't be saved as title exceed 20 characters!");
+            model.addAttribute("nav", "/home#nav-notes");
+            return "result";
+        }
+        if(description.length() > 1000){
+            model.addAttribute("errorResponse", true);
+            model.addAttribute("message", "Note can't be saved as description exceed 1000 characters!");
+            model.addAttribute("nav", "/home#nav-notes");
+            return "result";
+        }
         if(noteId == null) {
             saveNote(title, description, model, currentUser);
         }
